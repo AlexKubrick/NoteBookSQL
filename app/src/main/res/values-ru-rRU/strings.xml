@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">Заголовок</string>
+    <string name="write_your_memo">Напишите заметку</string>
+    <string name="app_name">NotebookSQLite</string>
+</resources>
