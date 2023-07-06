@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">NotebookSQLite</string>
+    <string name="app_name" translatable="false">NotebookSQLite</string>
+    <string name="title">Title</string>
+    <string name="write_your_memo">Write your memo</string>
 </resources>
