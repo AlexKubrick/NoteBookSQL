@@ -2,5 +2,6 @@
 <resources>
     <string name="title">Заголовок</string>
     <string name="write_your_memo">Напишіть нотатку</string>
+    <string name="empty">Пусто</string>
     <string name="app_name">NotebookSQLite</string>
 </resources>

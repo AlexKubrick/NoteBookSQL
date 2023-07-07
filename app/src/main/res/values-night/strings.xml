@@ -2,4 +2,5 @@
 <resources>
     <string name="title">Title</string>
     <string name="write_your_memo">Write your memo</string>
+    <string name="empty">Empty</string>
 </resources>
