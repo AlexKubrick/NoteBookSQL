@@ -13,8 +13,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bindingClass: ActivityMainBinding
 
     val myDbManager = MyDbManager(this)
-    val myAdapter = MyAdapter(ArrayList())
-
+    val myAdapter = MyAdapter(ArrayList(), this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,31 +23,41 @@ class MainActivity : AppCompatActivity() {
         init()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        myDbManager.closeDb()
-    }
-
-    //открываю БД не в onCreate, т.к. запустилось бы один раз (согласно циклу жизни активити)
+    // открываю БД не в onCreate, т.к. запустилось бы один раз (согласно циклу жизни активити)
     override fun onResume() {
         super.onResume()
         myDbManager.openDb()
         fillAdapter()
     }
 
+    //добавляем новую заметку
     fun onClickNew(view: View) {
         val i = Intent(this, EditActivity::class.java)
         startActivity(i)
 
     }
 
+    // здесь иницилизируем RecyclerView
     fun init() {
-        bindingClass.rcView.layoutManager = LinearLayoutManager(this)
+        bindingClass.rcView.layoutManager = LinearLayoutManager(this) // элементы по вертикали, как в обычном списке
         bindingClass.rcView.adapter = myAdapter
     }
 
     fun fillAdapter() {
-        myAdapter.updateAdapter(myDbManager.readDbData())
+
+        val list = myDbManager.readDbData()
+        myAdapter.updateAdapter(list)
+
+        if(list.size > 0) {
+            bindingClass.tvNoElements.visibility = View.GONE
+        } else {
+            bindingClass.tvNoElements.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        myDbManager.closeDb()
     }
 
 
