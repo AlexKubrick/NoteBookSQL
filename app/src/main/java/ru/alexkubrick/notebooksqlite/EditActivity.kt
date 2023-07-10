@@ -48,14 +48,10 @@ class EditActivity : AppCompatActivity() {
         if(resultCode == Activity.RESULT_OK && requestCode == imageRequestCode) {
             bindingClass.imMainImage.setImageURI(data?.data)
             tempImageUri = data?.data.toString()
-
-
-        }
-        if (data != null) { // важная часть, которая позволяет открывать изображения (нужны разрешения)
-            this.contentResolver.takePersistableUriPermission(
-                data.data!!,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
+            contentResolver.takePersistableUriPermission(data?.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            //CR -- класс, кот. дает ссылку + указать флаг
+            //нужно, чтобы ссылка на картинку оставалась после перезагрузки телефона
+            //10.07.2023 -- пока что нет доступа к картинкам из камеры
         }
     }
 
@@ -75,18 +71,17 @@ class EditActivity : AppCompatActivity() {
 
     fun onClickChooseImage(view: View) {
 
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT) //временная сссылка
-        intent.type = "image/*"
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION //постоянная ссылка от системы
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT) // постоянная ссылка
+        intent.type = "image/*" // все картинки
         startActivityForResult(intent,imageRequestCode)
     }
 
     fun onClickSave(view: View) {
 
-        val myTitle = bindingClass.edTitle.text.toString()
+        val myTitle = bindingClass.edTitle.text.toString() // из editable в текст
         val myDesc = bindingClass.edDesc.text.toString()
         if (myTitle != "" && myDesc != "") {
-            myDbManager.insertToDb(myTitle, myDesc, tempImageUri)
+            myDbManager.insertToDb(myTitle, myDesc, tempImageUri) // добавляем в БД
             finish()
 
         }
@@ -109,7 +104,6 @@ class EditActivity : AppCompatActivity() {
 
                     bindingClass.mainImageLayout.visibility = View.VISIBLE
                     bindingClass.imMainImage.setImageURI(Uri.parse(i.getStringExtra(MyIntentConstance.I_URI_KEY)))
-                    bindingClass.imDeleteButtonImage.visibility = View.GONE
                     bindingClass.imDeleteButtonImage.visibility = View.GONE
 
                 }

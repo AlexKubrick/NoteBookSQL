@@ -7,4 +7,8 @@
     <color name="dark_bg1">#545454</color>
     <color name="light_gray">#7E7E7E</color>
     <color name="white_gray">#B3B3B3</color>
+    <color name="Payne_gray">#466886</color>
+    <color name="Lavender_white">#CCC9DC</color>
+    <color name="Oxford_blue">#1B2A41</color>
+    <color name="Indigo_dye">#2A4265</color>
 </resources>

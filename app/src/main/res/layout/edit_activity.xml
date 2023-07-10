@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_bg1"
+    android:background="@color/Oxford_blue"
     android:padding="10dp"
     tools:context=".EditActivity">
 
@@ -28,7 +27,7 @@
         android:hint="@string/title"
         android:inputType="text"
         android:textColor="@color/black"
-        android:textColorHint="@color/light_gray"
+        android:textColorHint="@color/Lavender_white"
         app:layout_constraintBottom_toTopOf="@+id/edDesc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +47,7 @@
         android:inputType="text|textMultiLine"
         android:padding="10dp"
         android:textColor="@color/black"
-        android:textColorHint="@color/light_gray"
+        android:textColorHint="@color/Lavender_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/edTitle"
         app:layout_constraintStart_toStartOf="@+id/edTitle"
@@ -63,7 +62,7 @@
         android:alpha="0.6"
         android:clickable="true"
         android:onClick="onClickSave"
-        app:backgroundTint="@color/dark_blue"
+        app:backgroundTint="@color/Payne_gray"
         app:layout_constraintBottom_toBottomOf="@+id/edDesc"
         app:layout_constraintEnd_toEndOf="@+id/edDesc"
         app:srcCompat="@drawable/ic_save" />
@@ -75,10 +74,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:alpha="0.6"
-        android:background="@color/dark_blue"
+        android:background="@color/Payne_gray"
         android:clickable="true"
         android:onClick="onClickAddImage"
-        app:backgroundTint="@color/dark_blue"
+        app:backgroundTint="@color/Payne_gray"
         app:layout_constraintBottom_toTopOf="@+id/fbSave"
         app:layout_constraintEnd_toEndOf="@+id/edDesc"
         app:srcCompat="@drawable/baseline_image_24" />
@@ -88,7 +87,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@android:drawable/editbox_background"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="@+id/edTitle"
         app:layout_constraintHorizontal_bias="1.0"

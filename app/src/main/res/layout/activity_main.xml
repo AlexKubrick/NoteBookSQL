@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_bg1"
+    android:background="@color/Oxford_blue"
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -22,10 +22,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:background="@color/Payne_gray"
         android:clickable="true"
         android:focusable="true"
         android:onClick="onClickNew"
-        app:backgroundTint="@color/dark_blue"
+        app:backgroundTint="@color/Payne_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add" />
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:text="@string/empty"
-        android:textColor="@color/light_gray"
+        android:textColor="@color/Indigo_dye"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
