@@ -26,11 +26,14 @@ class MyDbManager(context: Context) {
     }
 
     @SuppressLint("Range")
-    fun readDbData(): ArrayList<ListItem> {
+    fun readDbData(searchText: String): ArrayList<ListItem> { // передаем текст, кот. будем искать
         val dataList = ArrayList<ListItem>()
+        val selection = "${MyDbNameClass.COLUMN_NAME_TITLE} like ?" // запрос -- ищем в колонке с заголовками
+        // если то, что написали, совпадет с БД -- покажет часть, где есть совпадение
+        // like ? -- запрос к SQLite
         val cursor = db?.query(MyDbNameClass.TABLE_NAME, null,
-            null, null,
-            null, null, null )
+            selection, arrayOf("%$searchText%"), // поиск по одной букве
+            null, null, null ) // selection -- колонка, в кот. будем искать; selectionArg -- текст, кот. ищем
 
         with(cursor) { //считываем элемент из БД
             while(this?.moveToNext()!!) {

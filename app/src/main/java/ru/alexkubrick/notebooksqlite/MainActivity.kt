@@ -3,7 +3,9 @@ package ru.alexkubrick.notebooksqlite
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
         init()
+        initSearchView()
     }
 
     // открываю БД не в onCreate, т.к. запустилось бы один раз (согласно циклу жизни активити)
@@ -51,9 +54,25 @@ class MainActivity : AppCompatActivity() {
         bindingClass.rcView.adapter = myAdapter
     }
 
+    fun initSearchView() {
+        bindingClass.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean { // поиск по нажатию на кнопку
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean { // поиск по написанию
+                val list = myDbManager.readDbData(newText!!) // считывает из БД
+                myAdapter.updateAdapter(list) // и обновляет Адаптер
+               Log.d("my log", "new text : $newText")
+                return true
+            }
+        }) // слушатель, который замечает любые изменения
+    // и это будем передавать в БД -- ищем совпадения
+    }
+
     fun fillAdapter() {
 
-        val list = myDbManager.readDbData()
+        val list = myDbManager.readDbData("") //для поиска берем отсюда эти две строки
         myAdapter.updateAdapter(list)
 
         if (list.size > 0) { // надпись "пусто"
