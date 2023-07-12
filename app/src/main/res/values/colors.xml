@@ -10,5 +10,6 @@
     <color name="Payne_gray">#466886</color>
     <color name="Lavender_white">#CCC9DC</color>
     <color name="Oxford_blue">#1B2A41</color>
-    <color name="Indigo_dye">#2A4265</color>
+    <color name="Indigo_dye">#000000</color>
+    <color name="edit_text_dark">#FF000000</color>
 </resources>

@@ -23,9 +23,10 @@ class MyAdapter(listMain:ArrayList<ListItem>, contextM: Context) : RecyclerView.
 
             itemView.setOnClickListener {
                 val intent = Intent(context, EditActivity::class.java).apply {
-                    putExtra(MyIntentConstance.I_TITLE_KEY, item.title)
-                    putExtra(MyIntentConstance.I_DESC_KEY, item.desc)
-                    putExtra(MyIntentConstance.I_URI_KEY, item.uri)
+                    putExtra(MyIntentConstants.I_TITLE_KEY, item.title)
+                    putExtra(MyIntentConstants.I_DESC_KEY, item.desc)
+                    putExtra(MyIntentConstants.I_URI_KEY, item.uri)
+                    putExtra(MyIntentConstants.I_ID_KEY, item.id) // добавили для обновления
 
                 }
                 context.startActivity(intent)

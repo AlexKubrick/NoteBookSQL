@@ -14,7 +14,7 @@ class MyDbManager(context: Context) {
         db = myDbHelper.writableDatabase
     }
 
-    //записываем внутрь БД
+    // записываем внутрь БД
     fun insertToDb(title: String, content: String, uri: String) {
         val values = ContentValues().apply {
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
@@ -35,7 +35,7 @@ class MyDbManager(context: Context) {
             selection, arrayOf("%$searchText%"), // поиск по одной букве
             null, null, null ) // selection -- колонка, в кот. будем искать; selectionArg -- текст, кот. ищем
 
-        with(cursor) { //считываем элемент из БД
+        with(cursor) { // считываем элемент из БД
             while(this?.moveToNext()!!) {
 
                 val dataTitle = cursor?.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_TITLE))
@@ -69,8 +69,15 @@ class MyDbManager(context: Context) {
         return dataList
     }
 
-    fun closeDb() {
-        myDbHelper.close()
+    fun updateItem(title: String, content: String, uri: String, id: Int) { // искать по id
+        val selection = BaseColumns._ID + "=$id"
+        val values = ContentValues().apply { // что обновить
+            put(MyDbNameClass.COLUMN_NAME_TITLE, title)
+            put(MyDbNameClass.COLUMN_NAME_CONTENT, content)
+            put(MyDbNameClass.COLUMN_NAME_IMAGE_URI, uri)
+        }
+        db?.update(MyDbNameClass.TABLE_NAME, values, selection, null) // как в удаление -- selection, какой именно элемент обновить
+
     }
 
     fun removeItemFromDb(id: String) { // delete according to id
@@ -81,4 +88,9 @@ class MyDbManager(context: Context) {
         db?.delete(MyDbNameClass.TABLE_NAME, selection, null)
 
     }
+
+    fun closeDb() {
+        myDbHelper.close()
+    }
+
 }

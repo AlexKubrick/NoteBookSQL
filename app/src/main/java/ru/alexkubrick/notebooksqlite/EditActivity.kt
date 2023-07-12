@@ -5,19 +5,18 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import ru.alexkubrick.notebooksqlite.databinding.EditActivityBinding
 import ru.alexkubrick.notebooksqlite.db.MyDbManager
-import ru.alexkubrick.notebooksqlite.db.MyIntentConstance
+import ru.alexkubrick.notebooksqlite.db.MyIntentConstants
 
 class EditActivity : AppCompatActivity() {
     val imageRequestCode = 10
     var tempImageUri = "empty"
     lateinit var bindingClass: EditActivityBinding
     val myDbManager = MyDbManager(this)
+    var id = 0
+    var isEditState = false // для проверки -- зашли в EditActivity для создания новой замиетки или для редактирования старой
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -49,9 +48,9 @@ class EditActivity : AppCompatActivity() {
             bindingClass.imMainImage.setImageURI(data?.data)
             tempImageUri = data?.data.toString()
             contentResolver.takePersistableUriPermission(data?.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            //CR -- класс, кот. дает ссылку + указать флаг
-            //нужно, чтобы ссылка на картинку оставалась после перезагрузки телефона
-            //10.07.2023 -- пока что нет доступа к картинкам из камеры
+            // CR -- класс, кот. дает ссылку + указать флаг
+            // нужно, чтобы ссылка на картинку оставалась после перезагрузки телефона
+            // 10.07.2023 -- пока что нет доступа к картинкам из камеры
         }
     }
 
@@ -76,38 +75,61 @@ class EditActivity : AppCompatActivity() {
         startActivityForResult(intent,imageRequestCode)
     }
 
-    fun onClickSave(view: View) {
+    fun onClickSave(view: View) { // по полученному id -- обновляем
 
         val myTitle = bindingClass.edTitle.text.toString() // из editable в текст
         val myDesc = bindingClass.edDesc.text.toString()
         if (myTitle != "" && myDesc != "") {
-            myDbManager.insertToDb(myTitle, myDesc, tempImageUri) // добавляем в БД
+            if (isEditState) {
+                myDbManager.updateItem(myTitle, myDesc, tempImageUri, id)
+            } else {
+                myDbManager.insertToDb(myTitle, myDesc, tempImageUri)// добавляем в БД
+            }
             finish()
 
         }
+
+
     }
 
-    fun getMyIntents() {
+    fun onEditEnable(view: View) { // редактирование
+        bindingClass.edTitle.isEnabled = true
+        bindingClass.edDesc.isEnabled = true
+        bindingClass.fbEdit.visibility = View.GONE
+    }
+
+    fun getMyIntents() { // получаем данные
+        bindingClass.fbEdit.visibility = View.GONE
 
         val i = intent
 
         if (i != null) {
 
-            if (i.getStringExtra(MyIntentConstance.I_TITLE_KEY) != null) {
+            if (i.getStringExtra(MyIntentConstants.I_TITLE_KEY) != null) {
 
                 bindingClass.fbAddImage.visibility = View.GONE
 
-                bindingClass.edTitle.setText(i.getStringExtra(MyIntentConstance.I_TITLE_KEY))
-                bindingClass.edDesc.setText(i.getStringExtra(MyIntentConstance.I_DESC_KEY))
+                bindingClass.edTitle.setText(i.getStringExtra(MyIntentConstants.I_TITLE_KEY))
+                isEditState = true // только когда получили интенты. при создании новой заметки -- ничего не передается
+                    // нужна, для того чтобы узнать, что делаем в функции onClickSave -- сохраняем или перезаписываем
+                bindingClass.edTitle.isEnabled = false // заблокировать элемент
+                bindingClass.edDesc.isEnabled = false // заблокировать элемент
+                bindingClass.fbEdit.visibility = View.VISIBLE
+                bindingClass.edDesc.setText(i.getStringExtra(MyIntentConstants.I_DESC_KEY))
 
-                if (i.getStringExtra(MyIntentConstance.I_URI_KEY) != "empty") {
+                id = i.getIntExtra(MyIntentConstants.I_ID_KEY, 0)
+                tempImageUri = i.getStringExtra(MyIntentConstants.I_URI_KEY)!!
+
+                if (i.getStringExtra(MyIntentConstants.I_URI_KEY) != "empty") {
 
                     bindingClass.mainImageLayout.visibility = View.VISIBLE
-                    bindingClass.imMainImage.setImageURI(Uri.parse(i.getStringExtra(MyIntentConstance.I_URI_KEY)))
+                    bindingClass.imMainImage.setImageURI(Uri.parse(i.getStringExtra(MyIntentConstants.I_URI_KEY)))
                     bindingClass.imDeleteButtonImage.visibility = View.GONE
 
                 }
             }
         }
     }
+
+
 }

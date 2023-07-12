@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     fun init() {
 
         bindingClass.rcView.layoutManager = LinearLayoutManager(this) // элементы по вертикали, как в обычном списке
-        val swapHelper = getSwapMg()
+        val swapHelper = getSwapMg() // свайп вправо
         swapHelper.attachToRecyclerView(bindingClass.rcView) // прикрепляем к RecyclerView
         bindingClass.rcView.adapter = myAdapter
     }
@@ -59,20 +59,20 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean { // поиск по нажатию на кнопку
                 return true
             }
-
+            // слушатель, который замечает любые изменения
+            // и это будем передавать в БД -- ищем совпадения
             override fun onQueryTextChange(newText: String?): Boolean { // поиск по написанию
                 val list = myDbManager.readDbData(newText!!) // считывает из БД
                 myAdapter.updateAdapter(list) // и обновляет Адаптер
                Log.d("my log", "new text : $newText")
                 return true
             }
-        }) // слушатель, который замечает любые изменения
-    // и это будем передавать в БД -- ищем совпадения
+        })
     }
 
     fun fillAdapter() {
 
-        val list = myDbManager.readDbData("") //для поиска берем отсюда эти две строки
+        val list = myDbManager.readDbData("")
         myAdapter.updateAdapter(list)
 
         if (list.size > 0) { // надпись "пусто"
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             ): Boolean {
                 return false
             }
-            //viewHolder -- class describes an item view and metadata about its place within the RecyclerView.
+            // viewHolder -- class describes an item view and metadata about its place within the RecyclerView.
             // у каждого элемента есть свой viewHolder. из него берем позицию элемента
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) { // here delete

@@ -26,7 +26,7 @@
         android:ems="10"
         android:hint="@string/title"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/edit_text_color_state"
         android:textColorHint="@color/Lavender_white"
         app:layout_constraintBottom_toTopOf="@+id/edDesc"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
         android:hint="@string/write_your_memo"
         android:inputType="text|textMultiLine"
         android:padding="10dp"
-        android:textColor="@color/black"
+        android:textColor="@color/edit_text_color_state"
         android:textColorHint="@color/Lavender_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/edTitle"
@@ -60,6 +60,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:alpha="0.6"
+        android:background="@color/Payne_gray"
         android:clickable="true"
         android:onClick="onClickSave"
         app:backgroundTint="@color/Payne_gray"
@@ -87,7 +88,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@android:drawable/editbox_background"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="@+id/edTitle"
         app:layout_constraintHorizontal_bias="1.0"
@@ -139,5 +140,20 @@
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fbEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/Payne_gray"
+        android:clickable="true"
+        android:onClick="onEditEnable"
+        app:backgroundTint="@color/Payne_gray"
+        app:backgroundTintMode="add"
+        app:layout_constraintBottom_toTopOf="@+id/fbAddImage"
+        app:layout_constraintEnd_toEndOf="@+id/edDesc"
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
