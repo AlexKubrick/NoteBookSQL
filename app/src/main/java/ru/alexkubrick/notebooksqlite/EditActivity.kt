@@ -9,6 +9,9 @@ import android.view.View
 import ru.alexkubrick.notebooksqlite.databinding.EditActivityBinding
 import ru.alexkubrick.notebooksqlite.db.MyDbManager
 import ru.alexkubrick.notebooksqlite.db.MyIntentConstants
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class EditActivity : AppCompatActivity() {
     val imageRequestCode = 10
@@ -65,6 +68,7 @@ class EditActivity : AppCompatActivity() {
 
         bindingClass.mainImageLayout.visibility = View.GONE
         bindingClass.fbAddImage.visibility = View.VISIBLE
+        tempImageUri = "empty"
 
     }
 
@@ -81,9 +85,9 @@ class EditActivity : AppCompatActivity() {
         val myDesc = bindingClass.edDesc.text.toString()
         if (myTitle != "" && myDesc != "") {
             if (isEditState) {
-                myDbManager.updateItem(myTitle, myDesc, tempImageUri, id)
+                myDbManager.updateItem(myTitle, myDesc, tempImageUri, id, getCurrentTime())
             } else {
-                myDbManager.insertToDb(myTitle, myDesc, tempImageUri)// добавляем в БД
+                myDbManager.insertToDb(myTitle, myDesc, tempImageUri, getCurrentTime()) // добавляем в БД
             }
             finish()
 
@@ -92,10 +96,17 @@ class EditActivity : AppCompatActivity() {
 
     }
 
-    fun onEditEnable(view: View) { // редактирование
+    fun onEditEnable(view: View) { // редактирование заметки
         bindingClass.edTitle.isEnabled = true
         bindingClass.edDesc.isEnabled = true
         bindingClass.fbEdit.visibility = View.GONE
+        bindingClass.fbAddImage.visibility = View.VISIBLE // редактирование картинки
+        if (tempImageUri == "empty") return // если изначально пусто, то не запускаем imButtonEditImage и imDeleteButtonImage
+
+        bindingClass.imButtonEditImage.visibility = View.VISIBLE
+        bindingClass.imDeleteButtonImage.visibility = View.VISIBLE
+
+
     }
 
     fun getMyIntents() { // получаем данные
@@ -118,17 +129,26 @@ class EditActivity : AppCompatActivity() {
                 bindingClass.edDesc.setText(i.getStringExtra(MyIntentConstants.I_DESC_KEY))
 
                 id = i.getIntExtra(MyIntentConstants.I_ID_KEY, 0)
-                tempImageUri = i.getStringExtra(MyIntentConstants.I_URI_KEY)!!
+
 
                 if (i.getStringExtra(MyIntentConstants.I_URI_KEY) != "empty") {
 
                     bindingClass.mainImageLayout.visibility = View.VISIBLE
-                    bindingClass.imMainImage.setImageURI(Uri.parse(i.getStringExtra(MyIntentConstants.I_URI_KEY)))
+                    tempImageUri = i.getStringExtra(MyIntentConstants.I_URI_KEY)!!
+                    bindingClass.imMainImage.setImageURI(Uri.parse(tempImageUri))
                     bindingClass.imDeleteButtonImage.visibility = View.GONE
+                    bindingClass.imButtonEditImage.visibility = View.GONE
 
                 }
             }
         }
+    }
+
+    private fun getCurrentTime(): String { // берем реальное время из устройства
+        val time = Calendar.getInstance().time // берем время
+        val format = SimpleDateFormat("dd-MM-yy kk:mm:ss", Locale.getDefault()) // задаем формат
+        val fTime = format.format(time) // приводит в нужный формат
+        return fTime
     }
 
 

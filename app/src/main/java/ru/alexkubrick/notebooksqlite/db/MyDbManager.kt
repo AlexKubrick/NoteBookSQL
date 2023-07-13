@@ -15,11 +15,13 @@ class MyDbManager(context: Context) {
     }
 
     // записываем внутрь БД
-    fun insertToDb(title: String, content: String, uri: String) {
+    fun insertToDb(title: String, content: String, uri: String, time: String) {
         val values = ContentValues().apply {
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
             put(MyDbNameClass.COLUMN_NAME_CONTENT, content)
             put(MyDbNameClass.COLUMN_NAME_IMAGE_URI, uri)
+            put(MyDbNameClass.COLUMN_NAME_TIME, time) // добавили время.
+        // перед этим обновили файл MyDbNameClass. там указали новую колонку и обновили версию БД
         }
         db?.insert(MyDbNameClass.TABLE_NAME, null, values)
 
@@ -42,6 +44,8 @@ class MyDbManager(context: Context) {
                 val dataContent = cursor?.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_CONTENT))
                 val dataUri = cursor?.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_IMAGE_URI))
                 val dataId = cursor?.getInt(cursor.getColumnIndex(BaseColumns._ID))
+                val time = cursor?.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_TIME)) // добавили время.
+                // перед этим обновили ListItem -- добавили переменную time = ""
 
                 var item = ListItem()
 
@@ -61,6 +65,10 @@ class MyDbManager(context: Context) {
                     item.id = dataId
                 }
 
+                if (time != null) {
+                    item.time = time
+                }
+
                 dataList.add(item)
             }
             cursor?.close()
@@ -69,12 +77,13 @@ class MyDbManager(context: Context) {
         return dataList
     }
 
-    fun updateItem(title: String, content: String, uri: String, id: Int) { // искать по id
+    fun updateItem(title: String, content: String, uri: String, id: Int, time: String) { // искать по id
         val selection = BaseColumns._ID + "=$id"
         val values = ContentValues().apply { // что обновить
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
             put(MyDbNameClass.COLUMN_NAME_CONTENT, content)
             put(MyDbNameClass.COLUMN_NAME_IMAGE_URI, uri)
+            put(MyDbNameClass.COLUMN_NAME_TIME, time)
         }
         db?.update(MyDbNameClass.TABLE_NAME, values, selection, null) // как в удаление -- selection, какой именно элемент обновить
 
