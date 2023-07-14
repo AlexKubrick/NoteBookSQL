@@ -5,7 +5,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+// context -- обеспечивает доступ к ресурсам и классам, специфичным для конкретного приложения,
+// а также к вызовам для операций на уровне приложения
 class MyDbManager(context: Context) {
     val myDbHelper = MyDbHelper(context)
     var db: SQLiteDatabase? = null
@@ -15,7 +18,7 @@ class MyDbManager(context: Context) {
     }
 
     // записываем внутрь БД
-    fun insertToDb(title: String, content: String, uri: String, time: String) {
+   suspend fun insertToDb(title: String, content: String, uri: String, time: String) = withContext(Dispatchers.IO){
         val values = ContentValues().apply {
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
             put(MyDbNameClass.COLUMN_NAME_CONTENT, content)
@@ -26,9 +29,16 @@ class MyDbManager(context: Context) {
         db?.insert(MyDbNameClass.TABLE_NAME, null, values)
 
     }
+    // cursor -  интерфейс обеспечивает произвольный доступ для чтения и записи
+    // к результирующему множеству, возвращаемому запросом к базе данных.
+    //Реализации курсора не обязательно синхронизировать, поэтому код,
+    // использующий курсор из нескольких потоков,
+    // должен выполнять свою собственную синхронизацию при использовании курсора.
 
     @SuppressLint("Range")
-    fun readDbData(searchText: String): ArrayList<ListItem> { // передаем текст, кот. будем искать
+    // передаем текст, кот. будем искать
+    suspend fun readDbData(searchText: String): ArrayList<ListItem> = withContext(Dispatchers.IO){ // второстепенный поток
+        // + блокирует корутину на основном потоке
         val dataList = ArrayList<ListItem>()
         val selection = "${MyDbNameClass.COLUMN_NAME_TITLE} like ?" // запрос -- ищем в колонке с заголовками
         // если то, что написали, совпадет с БД -- покажет часть, где есть совпадение
@@ -74,10 +84,10 @@ class MyDbManager(context: Context) {
             cursor?.close()
 
         }
-        return dataList
+        return@withContext dataList
     }
-
-    fun updateItem(title: String, content: String, uri: String, id: Int, time: String) { // искать по id
+    // искать по id
+    suspend fun updateItem(title: String, content: String, uri: String, id: Int, time: String) = withContext(Dispatchers.IO) {
         val selection = BaseColumns._ID + "=$id"
         val values = ContentValues().apply { // что обновить
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
@@ -85,7 +95,8 @@ class MyDbManager(context: Context) {
             put(MyDbNameClass.COLUMN_NAME_IMAGE_URI, uri)
             put(MyDbNameClass.COLUMN_NAME_TIME, time)
         }
-        db?.update(MyDbNameClass.TABLE_NAME, values, selection, null) // как в удаление -- selection, какой именно элемент обновить
+        db?.update(MyDbNameClass.TABLE_NAME, values, selection, null) // как в удаление -- selection,
+    // какой именно элемент обновить
 
     }
 

@@ -6,6 +6,9 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.alexkubrick.notebooksqlite.databinding.EditActivityBinding
 import ru.alexkubrick.notebooksqlite.db.MyDbManager
 import ru.alexkubrick.notebooksqlite.db.MyIntentConstants
@@ -84,12 +87,16 @@ class EditActivity : AppCompatActivity() {
         val myTitle = bindingClass.edTitle.text.toString() // из editable в текст
         val myDesc = bindingClass.edDesc.text.toString()
         if (myTitle != "" && myDesc != "") {
-            if (isEditState) {
-                myDbManager.updateItem(myTitle, myDesc, tempImageUri, id, getCurrentTime())
-            } else {
-                myDbManager.insertToDb(myTitle, myDesc, tempImageUri, getCurrentTime()) // добавляем в БД
+
+            CoroutineScope(Dispatchers.Main).launch {
+                if (isEditState) {
+                    myDbManager.updateItem(myTitle, myDesc, tempImageUri, id, getCurrentTime())
+                } else {
+                    myDbManager.insertToDb(myTitle, myDesc, tempImageUri, getCurrentTime()) // добавляем в БД
+                }
+                finish()
             }
-            finish()
+
 
         }
 
@@ -108,6 +115,7 @@ class EditActivity : AppCompatActivity() {
 
 
     }
+// https://developer.alexanderklimov.ru/android/theory/intent.php
 
     fun getMyIntents() { // получаем данные
         bindingClass.fbEdit.visibility = View.GONE

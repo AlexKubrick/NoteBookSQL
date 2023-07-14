@@ -16,7 +16,7 @@ class MyAdapter(listMain:ArrayList<ListItem>, contextM: Context) : RecyclerView.
 
     class MyHolder(itemView: View, contextV: Context) : RecyclerView.ViewHolder(itemView) {
         val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-        val tvTime = itemView.findViewById<TextView>(R.id.tvTime) // textView времни
+        val tvTime = itemView.findViewById<TextView>(R.id.tvTime) // textView времени
         val context = contextV
 
         fun setData(item: ListItem) {

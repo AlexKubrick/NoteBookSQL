@@ -2,7 +2,7 @@ package ru.alexkubrick.notebooksqlite.db
 
 import android.provider.BaseColumns
 
-object MyDbNameClass : BaseColumns { // 0 title content
+object MyDbNameClass : BaseColumns { // создается БД здесь. BaseColumns - хранит id одной записи (одной строки)
     const val TABLE_NAME = "my_table"
     const val COLUMN_NAME_TITLE = "title"
     const val COLUMN_NAME_CONTENT = "content"

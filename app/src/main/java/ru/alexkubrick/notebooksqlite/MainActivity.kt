@@ -9,6 +9,10 @@ import android.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import ru.alexkubrick.notebooksqlite.databinding.ActivityMainBinding
 import ru.alexkubrick.notebooksqlite.db.MyAdapter
 import ru.alexkubrick.notebooksqlite.db.MyDbManager
@@ -18,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     val myDbManager = MyDbManager(this)
     val myAdapter = MyAdapter(ArrayList(), this)
+    private var job: Job? = null // для остановки корутины. job -- специальный класс
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         super.onResume()
         myDbManager.openDb()
-        fillAdapter()
+        fillAdapter("") // ищет все элементы
     }
 
     //добавляем новую заметку
@@ -62,24 +67,47 @@ class MainActivity : AppCompatActivity() {
             // слушатель, который замечает любые изменения
             // и это будем передавать в БД -- ищем совпадения
             override fun onQueryTextChange(newText: String?): Boolean { // поиск по написанию
-                val list = myDbManager.readDbData(newText!!) // считывает из БД
-                myAdapter.updateAdapter(list) // и обновляет Адаптер
-               Log.d("my log", "new text : $newText")
+                fillAdapter(newText!!) // ищет по слову или букве
+
+                /**
+                 * coroutines
+                 *
+                 * val list = myDbManager.readDbData(newText!!) // считывает из БД
+                 * считывание из БД -- трудоемко.
+                 * возможно большое кол-во элементов и
+                 * считывание может заблокироваь осн. поток
+                 *
+                 * myAdapter.updateAdapter(list) // и обновляет Адаптер
+                 *
+                 * обновление адаптера -- не трудоемко, происходит на осн. потоке.
+                 * осн. поток блокировать нельзя. осн. поток отвечает за рисование UI.
+                 * если заблокировать -- onDraw не запуститься и не закончит рисование.
+                 * застынет экран и система может застывший процесс закрыть (приложение упадет).
+                */
                 return true
             }
         })
     }
 
-    fun fillAdapter() {
+    private fun fillAdapter(text: String) { // считывает из БД текст и обновляет адаптер
+        // создаем корутину. в скобках указываем поток
+        // (в данном случае это основной поток)
+        job?.cancel() // если job еще не запущен, то создадим корутину. иначе прекратим процесс
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val list = myDbManager.readDbData(text)
 
-        val list = myDbManager.readDbData("")
-        myAdapter.updateAdapter(list)
+            // можно сделать suspend. эта функция заблокирует корутину.
+            // в таком случае корутина будет ждать пока выполниться эта функция
+            myAdapter.updateAdapter(list)
 
-        if (list.size > 0) { // надпись "пусто"
-            bindingClass.tvNoElements.visibility = View.GONE
-        } else {
-            bindingClass.tvNoElements.visibility = View.VISIBLE
+            if (list.size > 0) { // если в БД есть элементы -- прячем надпись "пусто"
+                bindingClass.tvNoElements.visibility = View.GONE
+            } else {
+                bindingClass.tvNoElements.visibility = View.VISIBLE
+            }
+
         }
+
     }
 
     override fun onDestroy() {
