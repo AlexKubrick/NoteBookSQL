@@ -25,30 +25,23 @@ class EditActivity : AppCompatActivity() {
     var isEditState = false // для проверки -- зашли в EditActivity для создания новой замиетки или для редактирования старой
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         bindingClass = EditActivityBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
         getMyIntents()
-
-
     }
 
     override fun onDestroy() {
-
         super.onDestroy()
         myDbManager.closeDb()
     }
 
     override fun onResume() {
-
         super.onResume()
         myDbManager.openDb()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == imageRequestCode) {
             bindingClass.imMainImage.setImageURI(data?.data)
@@ -61,29 +54,23 @@ class EditActivity : AppCompatActivity() {
     }
 
     fun onClickAddImage(view: View) {
-
         bindingClass.mainImageLayout.visibility = View.VISIBLE
         bindingClass.fbAddImage.visibility = View.GONE
-
     }
 
     fun onClickDeleteImage(view: View) {
-
         bindingClass.mainImageLayout.visibility = View.GONE
         bindingClass.fbAddImage.visibility = View.VISIBLE
         tempImageUri = "empty"
-
     }
 
     fun onClickChooseImage(view: View) {
-
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT) // постоянная ссылка
         intent.type = "image/*" // все картинки
         startActivityForResult(intent,imageRequestCode)
     }
 
     fun onClickSave(view: View) { // по полученному id -- обновляем
-
         val myTitle = bindingClass.edTitle.text.toString() // из editable в текст
         val myDesc = bindingClass.edDesc.text.toString()
         if (myTitle != "" && myDesc != "") {
@@ -96,14 +83,10 @@ class EditActivity : AppCompatActivity() {
                 }
                 finish()
             }
-
-
         }
-
-
     }
 
-    fun onEditEnable(view: View) { // редактирование заметки
+    fun onEditEnable() { // редактирование заметки
         bindingClass.edTitle.isEnabled = true
         bindingClass.edDesc.isEnabled = true
         bindingClass.fbEdit.visibility = View.GONE
@@ -112,42 +95,33 @@ class EditActivity : AppCompatActivity() {
 
         bindingClass.imButtonEditImage.visibility = View.VISIBLE
         bindingClass.imDeleteButtonImage.visibility = View.VISIBLE
-
-
     }
 // https://developer.alexanderklimov.ru/android/theory/intent.php
 
-    fun getMyIntents() { // получаем данные
+    private fun getMyIntents() { // получаем данные
         bindingClass.fbEdit.visibility = View.GONE
 
         val i = intent
 
-        if (i != null) {
+        if (i.getStringExtra(MyIntentConstants.I_TITLE_KEY) != null) {
+            bindingClass.fbAddImage.visibility = View.GONE
 
-            if (i.getStringExtra(MyIntentConstants.I_TITLE_KEY) != null) {
+            bindingClass.edTitle.setText(i.getStringExtra(MyIntentConstants.I_TITLE_KEY))
+            isEditState = true // только когда получили интенты. при создании новой заметки -- ничего не передается
+            // нужна, для того чтобы узнать, что делаем в функции onClickSave -- сохраняем или перезаписываем
+            bindingClass.edTitle.isEnabled = false // заблокировать элемент
+            bindingClass.edDesc.isEnabled = false // заблокировать элемент
+            bindingClass.fbEdit.visibility = View.VISIBLE
+            bindingClass.edDesc.setText(i.getStringExtra(MyIntentConstants.I_DESC_KEY))
 
-                bindingClass.fbAddImage.visibility = View.GONE
+            id = i.getIntExtra(MyIntentConstants.I_ID_KEY, 0)
 
-                bindingClass.edTitle.setText(i.getStringExtra(MyIntentConstants.I_TITLE_KEY))
-                isEditState = true // только когда получили интенты. при создании новой заметки -- ничего не передается
-                    // нужна, для того чтобы узнать, что делаем в функции onClickSave -- сохраняем или перезаписываем
-                bindingClass.edTitle.isEnabled = false // заблокировать элемент
-                bindingClass.edDesc.isEnabled = false // заблокировать элемент
-                bindingClass.fbEdit.visibility = View.VISIBLE
-                bindingClass.edDesc.setText(i.getStringExtra(MyIntentConstants.I_DESC_KEY))
-
-                id = i.getIntExtra(MyIntentConstants.I_ID_KEY, 0)
-
-
-                if (i.getStringExtra(MyIntentConstants.I_URI_KEY) != "empty") {
-
-                    bindingClass.mainImageLayout.visibility = View.VISIBLE
-                    tempImageUri = i.getStringExtra(MyIntentConstants.I_URI_KEY)!!
-                    bindingClass.imMainImage.setImageURI(Uri.parse(tempImageUri))
-                    bindingClass.imDeleteButtonImage.visibility = View.GONE
-                    bindingClass.imButtonEditImage.visibility = View.GONE
-
-                }
+            if (i.getStringExtra(MyIntentConstants.I_URI_KEY) != "empty") {
+                bindingClass.mainImageLayout.visibility = View.VISIBLE
+                tempImageUri = i.getStringExtra(MyIntentConstants.I_URI_KEY)!!
+                bindingClass.imMainImage.setImageURI(Uri.parse(tempImageUri))
+                bindingClass.imDeleteButtonImage.visibility = View.GONE
+                bindingClass.imButtonEditImage.visibility = View.GONE
             }
         }
     }
@@ -158,6 +132,4 @@ class EditActivity : AppCompatActivity() {
         val fTime = format.format(time) // приводит в нужный формат
         return fTime
     }
-
-
 }

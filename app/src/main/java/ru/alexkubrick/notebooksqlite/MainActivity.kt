@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
@@ -36,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     // открываю БД не в onCreate, т.к. запустилось бы один раз (согласно циклу жизни активити)
     override fun onResume() {
-
         super.onResume()
         myDbManager.openDb()
         fillAdapter("") // ищет все элементы
@@ -44,15 +42,12 @@ class MainActivity : AppCompatActivity() {
 
     //добавляем новую заметку
     fun onClickNew(view: View) { // переходим на второй экран
-
         val i = Intent(this, EditActivity::class.java)
         startActivity(i)
-
     }
 
     // здесь иницилизируем RecyclerView
     fun init() {
-
         bindingClass.rcView.layoutManager = LinearLayoutManager(this) // элементы по вертикали, как в обычном списке
         val swapHelper = getSwapMg() // свайп вправо
         swapHelper.attachToRecyclerView(bindingClass.rcView) // прикрепляем к RecyclerView
@@ -105,19 +100,15 @@ class MainActivity : AppCompatActivity() {
             } else {
                 bindingClass.tvNoElements.visibility = View.VISIBLE
             }
-
         }
-
     }
 
     override fun onDestroy() {
-
         super.onDestroy()
         myDbManager.closeDb()
     }
 
     private fun getSwapMg(): ItemTouchHelper { // свайп вправо
-
         return ItemTouchHelper(object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -134,6 +125,4 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-
 }
